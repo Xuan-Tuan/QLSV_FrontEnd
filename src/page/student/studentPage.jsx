@@ -9,7 +9,7 @@ StudentPage.propTypes = {
 export default function StudentPage({ children }) {
   return (
     <>
-      <div className="flex flex-col m-0">
+      <div className="flex flex-col">
         <HeaderUser />
 
         <div>{children}</div>

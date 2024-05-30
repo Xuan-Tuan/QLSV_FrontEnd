@@ -34,28 +34,28 @@ export default function StudentCoursePage() {
 
   return (
     <div className="h-[calc(100vh-70px-50px)]">
-      <div className=" text-base h-12 mt-8 font-bold text-left align-middle pl-10 text-blue-700">
+      <div className="text-base p-4 font-bold text-left pl-10 text-blue-700">
         <div>
           <p>Danh sách môn học của bạn</p>
         </div>
       </div>
-      <div className="h-[calc(100vh-60px-50px-64px-64px)] m-10 lg:mr-96 lg:ml-20 shadow-lg flex flex-col gap-5 p-5 overflow-y-scroll will-change-scroll">
+      <div className="h-[calc(100vh-70px-50px-80px)]  md:w-3/5  w-full lg:mr-20 lg:ml-20 shadow-lg flex flex-col gap-5 p-5 overflow-y-scroll will-change-scroll scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-gray-400 hover:scrollbar-thumb-gray-500">
         {courseListInfo.map((course, index) => (
           <div
             key={index}
-            className="flex flex-row justify-between text-center items-center px-8 py-4 my-5 outline outline-4 outline-slate-50 hover:shadow-2xl  border-2"
+            className="flex flex-row justify-between items-center px-8 py-4 my-5 bg-white rounded-lg shadow-md hover:shadow-2xl transition-shadow duration-300 border border-gray-200"
           >
             <div className="flex flex-col text-start text-uit text-lg font-bold">
-              <p>Môn học: {course.name}</p>
-              <p>Giảng viên: {course.lecturerName}</p>
-              <p>Thời gian: {course.startDay}</p>
+              <p className="mb-2">Môn học: {course.name}</p>
+              <p className="mb-2">Giảng viên: {course.lecturerName}</p>
+              <p className="mb-2">Thời gian: {course.startDay}</p>
             </div>
             <div>
-              <div onClick={(e) => handleClickCourse(e, course.id)}>
-                <IoArrowForwardCircleOutline
-                  className="text-uit mr-10"
-                  size={50}
-                />
+              <div
+                onClick={(e) => handleClickCourse(e, course.id)}
+                className="cursor-pointer transform transition-transform duration-300 hover:scale-110"
+              >
+                <IoArrowForwardCircleOutline className="text-uit" size={50} />
               </div>
             </div>
           </div>

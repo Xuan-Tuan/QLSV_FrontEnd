@@ -128,6 +128,16 @@ export const browserRouter = createBrowserRouter(
         }
       />
       <Route
+        path="/student/account"
+        element={
+          <ProtectedClientPage>
+            <StudentPage>
+              <AccountInfor />
+            </StudentPage>
+          </ProtectedClientPage>
+        }
+      />
+      <Route
         path="/student/course"
         element={
           <ProtectedClientPage>
@@ -158,6 +168,16 @@ export const browserRouter = createBrowserRouter(
         }
       />
       <Route
+        path="/parent/account"
+        element={
+          <ProtectedClientPage>
+            <StudentPage>
+              <AccountInfor />
+            </StudentPage>
+          </ProtectedClientPage>
+        }
+      />
+      <Route
         path="/parent/course"
         element={
           <ProtectedClientPage>
@@ -184,6 +204,16 @@ export const browserRouter = createBrowserRouter(
             <LecturerPage>
               <AccountInfor />
             </LecturerPage>
+          </ProtectedClientPage>
+        }
+      />
+      <Route
+        path="/lecturer/account"
+        element={
+          <ProtectedClientPage>
+            <StudentPage>
+              <AccountInfor />
+            </StudentPage>
           </ProtectedClientPage>
         }
       />

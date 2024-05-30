@@ -9,7 +9,7 @@ ParentPage.propTypes = {
 export default function ParentPage({ children }) {
   return (
     <>
-      <div className="flex flex-col m-0">
+      <div className="flex flex-col ">
         <HeaderUser />
 
         <div>{children}</div>
