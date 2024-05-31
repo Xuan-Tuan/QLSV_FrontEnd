@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import UserProfile from "../account/userProfile";
 import { useAuth } from "../../controller/authController";
+import { MdOutlineManageAccounts } from "react-icons/md";
+import { LiaHomeSolid } from "react-icons/lia";
 
 export default function HeaderUser() {
   const { currentUser } = useAuth();
@@ -28,34 +30,39 @@ export default function HeaderUser() {
           </NavLink>
         </div>
         <div className="flex flex-col text-xs lg:text-base font-bold uppercase">
-          <div className="text-lg">Hệ thống quản lý sinh viên</div>
+          <div className="hidden sm:block text-lg">
+            Hệ thống quản lý sinh viên
+          </div>
+          <div className="block sm:hidden text-xs">
+            Hệ thống quản lý sinh viên
+          </div>
         </div>
       </div>
-      <div className="flex items-center justify-between flex-grow">
-        <nav className="text-xs lg:text-base font-bold flex-grow text-center">
+      <div className="flex items-center justify-center flex-grow">
+        <nav className="text-xs lg:text-base font-bold flex space-x-6">
           <NavLink to={`/${role}/course`} className={navLinkClass}>
-            Môn học
+            <span className="hidden sm:inline">Môn học</span>
+            <LiaHomeSolid className="inline sm:hidden" size={30} />
           </NavLink>
-        </nav>
-        <nav className="text-xs lg:text-base font-bold flex-grow text-center">
           <NavLink to={`/${role}/account`} className={navLinkClass}>
-            Tài khoản
+            <span className="hidden sm:inline">Tài khoản</span>
+            <MdOutlineManageAccounts className="inline sm:hidden" size={30} />
           </NavLink>
         </nav>
-        <div className="flex items-center space-x-4">
-          <div>
-            <input
-              type="text"
-              placeholder="Tìm kiếm"
-              className="rounded-full pl-4 pr-8 py-1 text-black"
-              aria-label="Tìm kiếm"
-            />
-          </div>
-          <div>
-            <NavLink to={`/${role}`}>
-              <UserProfile />
-            </NavLink>
-          </div>
+      </div>
+      <div className="hidden sm:flex items-center space-x-4">
+        <div>
+          <input
+            type="text"
+            placeholder="Tìm kiếm"
+            className="rounded-full pl-4 pr-8 py-1 text-black"
+            aria-label="Tìm kiếm"
+          />
+        </div>
+        <div>
+          <NavLink to={`/${role}`}>
+            <UserProfile />
+          </NavLink>
         </div>
       </div>
     </header>

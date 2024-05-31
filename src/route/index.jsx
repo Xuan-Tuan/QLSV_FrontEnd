@@ -8,6 +8,7 @@ import ManageRoomPage from "../page/admin/manageRoomPage";
 import ManageCoursePage from "../page/admin/manageCoursePage";
 import DetailCoursePage from "../page/admin/detailCoursePage";
 
+import LecturerNotification from "../page/lecturer/lecturerNotification";
 import LecturerCoursePage from "../page/lecturer/lecturerCoursePage";
 import LecturerDetailCoursePage from "../page/lecturer/lecturerDetailCoursePage";
 import StudentCoursePage from "../page/student/studentCoursePage";
@@ -233,6 +234,16 @@ export const browserRouter = createBrowserRouter(
           <ProtectedClientPage>
             <LecturerPage>
               <LecturerDetailCoursePage />
+            </LecturerPage>
+          </ProtectedClientPage>
+        }
+      />
+      <Route
+        path="/lecturer/course/:courseCode/notification"
+        element={
+          <ProtectedClientPage>
+            <LecturerPage>
+              <LecturerNotification />
             </LecturerPage>
           </ProtectedClientPage>
         }

@@ -15,6 +15,61 @@ import {
 import { db } from "../config/firebaseConfig";
 import { formattedDate } from "./formattedDate";
 
+// lấy sĩ số của lớp hợp
+async function getStudentCount(courseCode) {
+  try {
+    const courseStudentRef = collection(db, "courseStudent");
+    const courseStudentQuery = query(
+      courseStudentRef,
+      where("courseID", "==", courseCode)
+    );
+    const querySnapshot = await getDocs(courseStudentQuery);
+
+    return querySnapshot.size;
+  } catch (error) {
+    console.error("Error getting student count: ", error);
+    throw error;
+  }
+}
+// lấy uid của lịch học hôm nay
+async function getScheduleToday(courseID, Day) {
+  try {
+    const scheduleRef = collection(db, "schedule");
+    const scheduleQuery = query(
+      scheduleRef,
+      where("courseID", "==", courseID),
+      where("date", "==", Day)
+    );
+    const querySnapshot = await getDocs(scheduleQuery);
+
+    if (!querySnapshot.empty) {
+      const schedule = querySnapshot.docs[0];
+      return schedule.id;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Error getting schedule: ", error);
+    throw error;
+  }
+}
+// lấy số lượng sinh viên đã điểm danh
+async function getAttendedStudentCount(scheduleUID) {
+  try {
+    const attendanceRef = collection(db, "attendance");
+    const attendanceQuery = query(
+      attendanceRef,
+      where("scheduleID", "==", scheduleUID),
+      where("attended", "==", true)
+    );
+    const querySnapshot = await getDocs(attendanceQuery);
+
+    return querySnapshot.size;
+  } catch (error) {
+    console.error("Error getting attendance count: ", error);
+    throw error;
+  }
+}
 async function doGetCourseLecturer(lecturerID) {
   const courseRef = collection(db, "course");
   const courseQuery = query(courseRef, where("lecturerID", "==", lecturerID));
@@ -123,55 +178,152 @@ async function doUpdateCourseOnlineLink(courseCode, onlineURL) {
   return courseOnlLinkQuery;
 }
 
+// async function doGetStudentInfoLecturer(studentListID, courseCode) {
+//   const studentList = [];
+
+//   if (studentListID.length === 0) {
+//     console.log("Không có sinh viên nào trong studentListID");
+//     return studentList;
+//   }
+
+//   const attendanceRef = collection(db, "attendance");
+//   const studentRef = collection(db, "student");
+//   const studentQuery = query(
+//     studentRef,
+//     where(documentId(), "in", studentListID)
+//   );
+
+//   const studentSnap = await getDocs(studentQuery);
+//   studentSnap.forEach((doc) => {
+//     studentList.push({ id: doc.id, name: doc.data().name });
+//   });
+//   console.log("Truy van sinh vien", studentList);
+
+//   const studentListResult = await Promise.all(
+//     studentList.map(async (student) => {
+//       const attendanceQuery = query(
+//         attendanceRef,
+//         where("studentID", "==", student.id),
+//         where("courseID", "==", courseCode)
+//       );
+
+//       const attendedQuery = query(
+//         attendanceRef,
+//         where("studentID", "==", student.id),
+//         where("courseID", "==", courseCode),
+//         where("attended", "!=", false)
+//       );
+
+//       const attendanceSnap = await getCountFromServer(attendanceQuery);
+//       console.log("sum sv", attendanceSnap);
+//       const attendedSnap = await getCountFromServer(attendedQuery);
+//       console.log("sum sv dd", attendedSnap);
+
+//       return {
+//         ...student,
+//         attended: attendedSnap.data().count,
+//         total: attendanceSnap.data().count,
+//       };
+//     })
+//   );
+//   console.log("co", total);
+//   console.log("dd", attended);
+//   console.log("ket qua ham", studentListResult);
+//   return studentListResult;
+// }
+
 async function doGetStudentInfoLecturer(studentListID, courseCode) {
   const studentList = [];
 
   if (studentListID.length === 0) {
-    console.log("No student");
+    console.log("Không có sinh viên nào trong studentListID");
     return studentList;
   }
 
-  const attendanceRef = collection(db, "attendance");
-  const studentRef = collection(db, "student");
+  try {
+    const attendanceRef = collection(db, "attendance");
+    const studentRef = collection(db, "student");
+    const studentQuery = query(
+      studentRef,
+      where(documentId(), "in", studentListID)
+    );
 
-  const studentQuery = query(
-    studentRef,
-    where(documentId(), "in", studentListID)
-  );
+    const studentSnap = await getDocs(studentQuery);
 
-  const studentSnap = await getDocs(studentQuery);
-  studentSnap.forEach((doc) => {
-    studentList.push({ id: doc.id, name: doc.data().name });
-  });
+    studentSnap.forEach((doc) => {
+      // console.log("data", doc.data());
+      studentList.push({
+        id: doc.id,
+        name: doc.data().name,
+        phoneNumber: doc.data().phoneNumber,
+        address: doc.data().address,
+      });
+    });
 
-  const studentListResult = await Promise.all(
-    studentList.map(async (student) => {
-      const attendanceQuery = query(
-        attendanceRef,
-        where("studentID", "==", student.id),
-        where("courseID", "==", courseCode)
-      );
+    console.log("Truy van sinh vien", studentList);
 
-      const attendedQuery = query(
-        attendanceRef,
-        where("studentID", "==", student.id),
-        where("courseID", "==", courseCode),
-        where("attended", "!=", false)
-      );
+    const studentListResult = await Promise.all(
+      studentList.map(async (student) => {
+        try {
+          const attendanceQuery = query(
+            attendanceRef,
+            where("studentID", "==", student.id),
+            where("courseID", "==", courseCode)
+          );
+          // console.log(
+          //   "attendanceQuery for student",
+          //   student.id,
+          //   attendanceQuery
+          // );
 
-      const attendanceSnap = await getCountFromServer(attendanceQuery);
+          const attendedQuery = query(
+            attendanceRef,
+            where("studentID", "==", student.id),
+            where("courseID", "==", courseCode),
+            where("attended", "==", true)
+          );
+          // console.log("attendedQuery for student", student.id, attendedQuery);
 
-      const attendedSnap = await getCountFromServer(attendedQuery);
+          const attendanceSnap = await getCountFromServer(attendanceQuery);
+          // console.log(
+          //   `sum sv for student ${student.id}`,
+          //   attendanceSnap.data()
+          // );
 
-      return {
-        ...student,
-        attended: attendedSnap.data().count,
-        total: attendanceSnap.data().count,
-      };
-    })
-  );
+          const attendedSnap = await getCountFromServer(attendedQuery);
+          // console.log(
+          //   `sum sv dd for student ${student.id}`,
+          //   attendedSnap.data()
+          // );
 
-  return studentListResult;
+          const total = attendanceSnap.data() ? attendanceSnap.data().count : 0;
+          const attended = attendedSnap.data() ? attendedSnap.data().count : 0;
+
+          return {
+            ...student,
+            attended: attended,
+            total: total,
+          };
+        } catch (error) {
+          console.error(
+            `Error fetching attendance data for student ${student.id}:`,
+            error
+          );
+          return {
+            ...student,
+            attended: 0,
+            total: 0,
+          };
+        }
+      })
+    );
+
+    console.log("Ket qua tra ve: ", studentListResult);
+    return studentListResult;
+  } catch (error) {
+    console.error("Error fetching student data:", error);
+    return [];
+  }
 }
 
 async function doGetStudentFromParent(parentID) {
@@ -654,6 +806,9 @@ async function doUpdateCourseStudentList(courseID, newCourseStudentList) {
 }
 
 export {
+  getStudentCount,
+  getScheduleToday,
+  getAttendedStudentCount,
   doAddRoom,
   doAddCourse,
   doAddCourseStudent,

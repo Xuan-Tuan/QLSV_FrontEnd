@@ -45,25 +45,25 @@ export default function StudentDetailCoursePage() {
   return (
     <div className="h-[calc(100vh-70px-50px)] flex flex-col lg:flex-row justify-evenly p-8 bg-gray-50">
       <div className="flex flex-col justify-start items-center space-y-6 mt-8">
-        <h2 className="text-2xl text-uit font-semibold text-center">
+        <h2 className="text-2xl text-uit font-semibold mr-4 text-center">
           Môn học: {course.name}
         </h2>
         <div className="flex items-center justify-center border border-uit bg-white rounded-lg shadow-lg px-8 py-6 w-full lg:w-96">
           <div className="flex flex-col space-y-4 text-uit text-lg">
             <div className="flex justify-between">
-              <span className="font-semibold">Giáo viên:</span>
+              <span className="font-semibold mr-4">Giáo viên:</span>
               <span>{course.lecturerName}</span>
             </div>
             <div className="flex justify-between">
-              <span className="font-semibold">Ngày bắt đầu:</span>
+              <span className="font-semibold mr-4 mr-4">Ngày bắt đầu:</span>
               <span>{course.startDay}</span>
             </div>
             <div className="flex justify-between">
-              <span className="font-semibold">Tuần học:</span>
+              <span className="font-semibold mr-4">Tuần học:</span>
               <span>{course.week} Tuần</span>
             </div>
             <div className="flex justify-between">
-              <span className="font-semibold">Phòng học:</span>
+              <span className="font-semibold mr-4">Phòng học:</span>
               <span>{course.roomID}</span>
             </div>
           </div>
@@ -71,7 +71,7 @@ export default function StudentDetailCoursePage() {
       </div>
 
       <div className="flex flex-col justify-start items-center space-y-6 mt-8">
-        <h2 className="text-2xl text-uit font-semibold text-center">
+        <h2 className="text-2xl text-uit font-semibold mr-4 text-center">
           Thông tin lịch học hôm nay: {currentDay}
         </h2>
         <div className="flex items-center justify-center border border-uit bg-white rounded-lg shadow-lg px-8 py-6 w-full lg:w-96">
@@ -81,27 +81,32 @@ export default function StudentDetailCoursePage() {
             ) : (
               <div key={schedule[0].id}>
                 <div className="flex justify-between">
-                  <span className="font-semibold">Online URL:</span>
+                  <span className="font-semibold mr-4">Online URL:</span>
                   <span>{course.onlineURL}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="font-semibold">Thời gian bắt đầu:</span>
+                  <span className="font-semibold mr-4">Thời gian bắt đầu:</span>
                   <span>{schedule[0].startTime}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="font-semibold">Thời gian kết thúc:</span>
+                  <span className="font-semibold mr-4">
+                    Thời gian kết thúc:
+                  </span>
                   <span>{schedule[0].endTime}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="font-semibold">Ngày học:</span>
+                  <span className="font-semibold mr-4">Ngày học:</span>
                   <span>{schedule[0].date}</span>
                 </div>
               </div>
             )}
-            <div className="flex justify-between">
-              <span className="font-semibold">Trạng thái điểm danh:</span>
-              <span>
-                {attendanceStats.attended}/{attendanceStats.total}
+            <div className="flex justify-between border border-uit bg-white rounded-lg shadow-lg p-4">
+              <span className="font-semibold mr-4">Trạng thái điểm danh:</span>
+              <span className="font-semibold mr-4">
+                <span className="text-green-500">
+                  {attendanceStats.attended}
+                </span>
+                /<span className="text-red-500">{attendanceStats.total}</span>
               </span>
             </div>
           </div>
