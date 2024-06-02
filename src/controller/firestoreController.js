@@ -15,7 +15,7 @@ import {
 import { db } from "../config/firebaseConfig";
 import { formattedDate } from "./formattedDate";
 
-// lấy sĩ số của lớp hợp
+// lấy sĩ số của lớp học mà giáo viên đang giảng dạy
 async function getStudentCount(courseCode) {
   try {
     const courseStudentRef = collection(db, "courseStudent");
@@ -31,7 +31,7 @@ async function getStudentCount(courseCode) {
     throw error;
   }
 }
-// lấy uid của lịch học hôm nay
+// lấy uid của lịch dạy học hôm nay (schedule)
 async function getScheduleToday(courseID, Day) {
   try {
     const scheduleRef = collection(db, "schedule");
@@ -53,7 +53,7 @@ async function getScheduleToday(courseID, Day) {
     throw error;
   }
 }
-// lấy số lượng sinh viên đã điểm danh
+// lấy số lượng sinh viên đã điểm danh của lớp học
 async function getAttendedStudentCount(scheduleUID) {
   try {
     const attendanceRef = collection(db, "attendance");

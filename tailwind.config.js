@@ -4,7 +4,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        uit: "#115D9D",
+        uit: "#00693E",
+        uitLight: "#F2FFEF",
       },
     },
   },

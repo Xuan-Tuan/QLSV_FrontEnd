@@ -9,10 +9,10 @@ import { collection, query, onSnapshot } from "firebase/firestore";
 
 ModifyDeviceForm.propTypes = {
   deviceId: PropTypes.string.isRequired,
-  closeForm: PropTypes.func.isRequired,
+  closeModal: PropTypes.func.isRequired,
 };
 
-function ModifyDeviceForm({ deviceId, closeForm }) {
+function ModifyDeviceForm({ deviceId, closeModal }) {
   const [deviceData, setDeviceData] = useState({
     id: "",
     roomID: "",
@@ -54,54 +54,112 @@ function ModifyDeviceForm({ deviceId, closeForm }) {
     }
     // Replace this with your actual update logic
     updateDeviceData(deviceId, deviceData).then(() => {
-      closeForm();
+      closeModal();
     });
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        ID:
-        <input
-          type="text"
-          name="id"
-          value={deviceData.id}
-          onChange={handleInputChange}
-          disabled
-        />
-      </label>
-      <label>
-        Room ID:
-        <select
-          name="roomID"
-          value={deviceData.roomID}
-          onChange={handleInputChange}
-        >
-          <option value="">Select Room</option>
-          {roomList.map((roomID) => {
-            return (
+    // <form onSubmit={handleSubmit}>
+    //   <label>
+    //     ID:
+    //     <input
+    //       type="text"
+    //       name="id"
+    //       value={deviceData.id}
+    //       onChange={handleInputChange}
+    //       disabled
+    //     />
+    //   </label>
+    //   <label>
+    //     Room ID:
+    //     <select
+    //       name="roomID"
+    //       value={deviceData.roomID}
+    //       onChange={handleInputChange}
+    //     >
+    //       <option value="">Select Room</option>
+    //       {roomList.map((roomID) => {
+    //         return (
+    //           <option key={roomID} value={roomID}>
+    //             {roomID}
+    //           </option>
+    //         );
+    //       })}
+    //     </select>
+    //   </label>
+    //   <label>
+    //     Status:
+    //     <input
+    //       type="text"
+    //       name="status"
+    //       value={deviceData.status}
+    //       onChange={handleInputChange}
+    //       disabled
+    //     />
+    //   </label>
+    //   <button type="submit">Submit</button>
+    //   <button type="button" onClick={closeForm}>
+    //     Cancel
+    //   </button>
+    // </form>
+    <div className="bg-white p-8 rounded shadow-md">
+      <h2 className="text-xl font-bold mb-4">Modify Device</h2>
+      <form onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <label className="block text-gray-700">ID:</label>
+          <input
+            type="text"
+            name="id"
+            value={deviceData.id}
+            onChange={handleInputChange}
+            className="border border-gray-300 p-2 rounded w-full"
+            disabled
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700">Room ID:</label>
+          <select
+            name="roomID"
+            value={deviceData.roomID}
+            onChange={handleInputChange}
+            className="border border-gray-300 p-2 rounded w-full"
+          >
+            <option value="">Select Room</option>
+            {roomList.map((roomID) => (
               <option key={roomID} value={roomID}>
                 {roomID}
               </option>
-            );
-          })}
-        </select>
-      </label>
-      <label>
-        Status:
-        <input
-          type="text"
-          name="status"
-          value={deviceData.status}
-          onChange={handleInputChange}
-          disabled
-        />
-      </label>
-      <button type="submit">Submit</button>
-      <button type="button" onClick={closeForm}>
-        Cancel
-      </button>
-    </form>
+            ))}
+          </select>
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700">Status:</label>
+          <input
+            type="text"
+            name="status"
+            value={deviceData.status}
+            onChange={handleInputChange}
+            className="border border-gray-300 p-2 rounded w-full"
+            disabled
+          />
+        </div>
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition mr-2"
+          >
+            Xác nhận
+          </button>
+          <button
+            type="button"
+            className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition"
+            onClick={closeModal}
+          >
+            Hủy
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }
 

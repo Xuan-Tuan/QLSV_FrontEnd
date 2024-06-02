@@ -4,6 +4,9 @@ import { onSnapshot, collection, query } from "firebase/firestore";
 import { doDeleteLecturer } from "../../controller/firestoreController";
 import axiosInstance from "../../controller/axiosInstance";
 import ModifyLecturerForm from "./modifyForm/modifyLecturerForm";
+import { AiOutlineUserDelete } from "react-icons/ai";
+import { TbUserEdit } from "react-icons/tb";
+// import Modal from "react-modal";
 
 export default function ManageLecturerPage() {
   const [lecturers, setLecturers] = useState([]);
@@ -19,6 +22,9 @@ export default function ManageLecturerPage() {
   });
   const [currentLecturerId, setCurrentLecturerId] = useState("");
   const [isModifyFormOpen, setIsModifyFormOpen] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [lecturerToDelete, setLecturerToDelete] = useState(null);
+  const [isAddLecturerFormOpen, setIsAddLecturerFormOpen] = useState(false);
 
   const addLecturer = async (data) => {
     const response = await axiosInstance.post("/addLecturer", data);
@@ -36,16 +42,24 @@ export default function ManageLecturerPage() {
     setCurrentLecturerId(lecturerId);
   };
 
-  const handleDeleteLecturer = async (e, id) => {
+  const handleDeleteLecturer = (e, id) => {
     e.preventDefault();
+    setLecturerToDelete(id);
+    setIsConfirmModalOpen(true);
+  };
+
+  const confirmDeleteLecturer = async () => {
     try {
-      await doDeleteLecturer(id);
-      const result = await deleteLecturer(id);
+      await doDeleteLecturer(lecturerToDelete);
+      const result = await deleteLecturer(lecturerToDelete);
       console.log(result);
       alert("Lecturer deleted successfully");
     } catch (error) {
       console.log(error);
       alert("Failed to delete lecturer");
+    } finally {
+      setIsConfirmModalOpen(false);
+      setLecturerToDelete(null);
     }
   };
 
@@ -133,66 +147,178 @@ export default function ManageLecturerPage() {
   }, []);
 
   return (
-    <div>
-      <h1>Lecturer&apos;s List</h1>
-      <ul>
-        {lecturers.map((lecturer) => (
-          <li key={lecturer.id}>
-            {lecturer.name} - {lecturer.email} - {lecturer.address} -{" "}
-            {lecturer.phoneNumber}
-            <button onClick={(e) => handleModifyLecturer(e, lecturer.id)}>
-              Modify
-            </button>
-            <button onClick={(e) => handleDeleteLecturer(e, lecturer.id)}>
-              Delete
-            </button>
-          </li>
-        ))}
-      </ul>
-      <br />
+    <div className="container mx-auto p-4">
+      <div className="flex flex-row justify-between items-center mb-8">
+        <div className="flex flex-col justify-between items-center text-uit">
+          <div className="font-semibold p-4 text-2xl">Quản lý giảng viên</div>
+          <div>{lecturers.length} giảng viên</div>
+        </div>
+        <button
+          className="bg-blue-500 text-white font-semibold px-4 py-2 rounded cursor-pointer transform transition-transform duration-300 hover:scale-110 hover:text-red-500 hover:bg-white hover:shadow-md"
+          onClick={() => setIsAddLecturerFormOpen(true)}
+        >
+          Thêm giảng viên
+        </button>
+      </div>
+
+      <div className="flex justify-center my-8">
+        {lecturers.length > 0 ? (
+          <div className="w-full max-h-96 overflow-y-auto">
+            <table className="min-w-full table-auto shadow-lg rounded-lg overflow-hidden">
+              <thead className="bg-gray-200">
+                <tr>
+                  <th className="px-4 py-2">STT</th>
+                  <th className="px-4 py-2">Họ tên</th>
+                  <th className="px-4 py-2">Email</th>
+                  <th className="px-4 py-2">Địa chỉ</th>
+                  <th className="px-4 py-2">Số điện thoại</th>
+                  <th className="px-4 py-2">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                {lecturers.map((lecturer, index) => (
+                  <tr
+                    key={lecturer.id}
+                    className="bg-white hover:bg-gray-100 transition-colors"
+                  >
+                    <td className="border px-4 py-2">{index + 1}</td>
+                    <td className="border px-4 py-2">{lecturer.name}</td>
+                    <td className="border px-4 py-2">{lecturer.email}</td>
+                    <td className="border px-4 py-2">{lecturer.address}</td>
+                    <td className="border px-4 py-2">{lecturer.phoneNumber}</td>
+                    <td className="border px-4 py-2 flex justify-around items-center">
+                      <TbUserEdit
+                        className="bg-yellow-500 text-white px-2 py-1 rounded  cursor-pointer transform transition-transform duration-300 hover:scale-110"
+                        onClick={(e) => handleModifyLecturer(e, lecturer.id)}
+                        size={40}
+                      />
+                      <AiOutlineUserDelete
+                        className="bg-red-500 text-white px-2 py-1 rounded  cursor-pointer transform transition-transform duration-300 hover:scale-110"
+                        onClick={(e) => handleDeleteLecturer(e, lecturer.id)}
+                        size={40}
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p>Không tìm thấy giáo viên nào</p>
+        )}
+      </div>
+
       {isModifyFormOpen && (
         <ModifyLecturerForm
           lecturerId={currentLecturerId}
           closeForm={() => setIsModifyFormOpen(false)}
         />
       )}
-      <br />
-      <h1>Add Lecturer</h1>
-      <form onSubmit={(e) => handleSubmit(e)}>
-        <label>Email</label>
-        <input
-          type="text"
-          value={authLec.email}
-          onChange={(e) => setAuthLec({ ...authLec, email: e.target.value })}
-        />
-        <label>Password</label>
-        <input
-          type="password"
-          value={authLec.password}
-          onChange={(e) => setAuthLec({ ...authLec, password: e.target.value })}
-        />
-        <label>Name</label>
-        <input
-          type="text"
-          value={lecInfo.name}
-          onChange={(e) => setLecInfo({ ...lecInfo, name: e.target.value })}
-        />
-        <label>Address</label>
-        <input
-          type="text"
-          value={lecInfo.address}
-          onChange={(e) => setLecInfo({ ...lecInfo, address: e.target.value })}
-        />
-        <label>Phone Number</label>
-        <input
-          type="text"
-          value={lecInfo.phone}
-          onChange={(e) =>
-            setLecInfo({ ...lecInfo, phoneNumber: e.target.value })
-          }
-        />
-        <button type="submit">Submit</button>
-      </form>
+
+      {isConfirmModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded shadow-lg">
+            <h2 className="text-xl font-bold mb-4">Xác nhận xóa giảng viên</h2>
+            <p className="mb-4">
+              Bạn có chắc chắn muốn xóa giảng viên này không?
+            </p>
+            <div className="flex justify-end">
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded mr-2 hover:bg-red-600"
+                onClick={confirmDeleteLecturer}
+              >
+                Xóa
+              </button>
+              <button
+                className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                onClick={() => setIsConfirmModalOpen(false)}
+              >
+                Hủy
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isAddLecturerFormOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg transform transition-all duration-300 scale-100 lg:w-1/3 w-1/2">
+            <h2 className="text-2xl font-semibold mb-4">Thêm giảng viên</h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="flex flex-col">
+                <label className="font-medium">Email</label>
+                <input
+                  type="text"
+                  value={authLec.email}
+                  onChange={(e) =>
+                    setAuthLec({ ...authLec, email: e.target.value })
+                  }
+                  className="border rounded p-2"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="font-medium">Password</label>
+                <input
+                  type="password"
+                  value={authLec.password}
+                  onChange={(e) =>
+                    setAuthLec({ ...authLec, password: e.target.value })
+                  }
+                  className="border rounded p-2"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="font-medium">Name</label>
+                <input
+                  type="text"
+                  value={lecInfo.name}
+                  onChange={(e) =>
+                    setLecInfo({ ...lecInfo, name: e.target.value })
+                  }
+                  className="border rounded p-2"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="font-medium">Address</label>
+                <input
+                  type="text"
+                  value={lecInfo.address}
+                  onChange={(e) =>
+                    setLecInfo({ ...lecInfo, address: e.target.value })
+                  }
+                  className="border rounded p-2"
+                />
+              </div>
+              <div className="flex flex-col">
+                <label className="font-medium">Phone Number</label>
+                <input
+                  type="text"
+                  value={lecInfo.phoneNumber}
+                  onChange={(e) =>
+                    setLecInfo({ ...lecInfo, phoneNumber: e.target.value })
+                  }
+                  className="border rounded p-2"
+                />
+              </div>
+              <div className="flex justify-end space-x-2">
+                <button
+                  type="button"
+                  className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                  onClick={() => setIsAddLecturerFormOpen(false)}
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                >
+                  Thêm
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -7,7 +7,7 @@ import StudentListComponent from "./studentListComponent";
 export default function ManageStudentPage() {
   const [students, setStudents] = useState([]);
   const [parents, setParents] = useState([]);
-
+  const [isAddStudentFormOpen, setIsAddStudentFormOpen] = useState(false); // trạng thái khi click vào thêm sinh viên
   const [authStu, setAuthStu] = useState({
     email: "",
     password: "",

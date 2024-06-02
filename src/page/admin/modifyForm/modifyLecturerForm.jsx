@@ -71,39 +71,64 @@ function ModifyLecturerForm({ lecturerId, closeForm }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Name:
-        <input
-          type="text"
-          name="name"
-          value={lecturerData.name}
-          onChange={handleInputChange}
-        />
-      </label>
-      <label>
-        Address:
-        <input
-          type="text"
-          name="address"
-          value={lecturerData.address}
-          onChange={handleInputChange}
-        />
-      </label>
-      <label>
-        Phone Number:
-        <input
-          type="text"
-          name="phoneNumber"
-          value={lecturerData.phoneNumber}
-          onChange={handleInputChange}
-        />
-      </label>
-      <button type="submit">Submit</button>
-      <button type="button" onClick={closeForm}>
-        Cancel
-      </button>
-    </form>
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+      <div className="bg-white p-6 rounded shadow-lg w-full max-w-lg">
+        <h2 className="text-2xl font-bold mb-4">Modify Lecturer</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Name:
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={lecturerData.name}
+              onChange={handleInputChange}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Address:
+            </label>
+            <input
+              type="text"
+              name="address"
+              value={lecturerData.address}
+              onChange={handleInputChange}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 text-sm font-bold mb-2">
+              Phone Number:
+            </label>
+            <input
+              type="text"
+              name="phoneNumber"
+              value={lecturerData.phoneNumber}
+              onChange={handleInputChange}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+          </div>
+          <div className="flex items-center justify-between">
+            <button
+              type="submit"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              Submit
+            </button>
+            <button
+              type="button"
+              onClick={closeForm}
+              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   );
 }
 

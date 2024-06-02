@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
-import { doAddRoom, doDeleteRoom } from "../../controller/firestoreController";
-import { onSnapshot, collection, query } from "firebase/firestore";
-import { db } from "../../config/firebaseConfig";
+// import { doAddRoom, doDeleteRoom } from "../../controller/firestoreController";
+// import { onSnapshot, collection, query } from "firebase/firestore";
+// import { db } from "../../config/firebaseConfig";
 
 export default function ManageRoomPage() {
   const [room, setRoom] = useState("");
   const [roomList, setRoomList] = useState([]);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [roomToDelete, setRoomToDelete] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,8 +22,11 @@ export default function ManageRoomPage() {
         alert("Room already exists");
         return;
       }
-      await doAddRoom(room);
+      // await doAddRoom(room);
+      setRoomList([...roomList, { id: room }]);
       alert("Room added successfully");
+      setShowAddForm(false); // Hide the form after submission
+      setRoom(""); // Clear the room input
     } catch (error) {
       console.log(error);
     }
@@ -29,8 +35,11 @@ export default function ManageRoomPage() {
   const handleDeleteRoom = async (e, id) => {
     e.preventDefault();
     try {
-      await doDeleteRoom(id);
+      // await doDeleteRoom(id);
+      setRoomList(roomList.filter((roomItem) => roomItem.id !== id));
       alert("Room deleted successfully");
+      setShowDeleteModal(false); // Hide the modal after deletion
+      setRoomToDelete(null); // Clear the roomToDelete state
     } catch (error) {
       console.log(error);
       alert("Failed to delete room");
@@ -38,46 +47,126 @@ export default function ManageRoomPage() {
   };
 
   useEffect(() => {
-    const queryRoom = query(collection(db, "room"));
+    // const queryRoom = query(collection(db, "room"));
 
-    const unsubscribeRoom = onSnapshot(
-      queryRoom,
-      (snapShot) => {
-        let roomList = [];
-        snapShot.docs.forEach((doc) => {
-          roomList.push({ id: doc.id });
-        });
-        setRoomList(roomList);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-    return () => {
-      unsubscribeRoom();
-    };
+    // const unsubscribeRoom = onSnapshot(
+    //   queryRoom,
+    //   (snapShot) => {
+    //     let roomList = [];
+    //     snapShot.docs.forEach((doc) => {
+    //       roomList.push({ id: doc.id });
+    //     });
+    //     setRoomList(roomList);
+    //   },
+    //   (error) => {
+    //     console.log(error);
+    //   }
+    // );
+    // return () => {
+    //   unsubscribeRoom();
+    // };
+
+    const sampleRoomList = [{ id: "Room1" }, { id: "Room2" }, { id: "Room3" }];
+
+    setRoomList(sampleRoomList);
   }, []);
 
   return (
-    <div>
-      <h1>Room&apos;s List</h1>
-      {roomList.map((room) => (
-        <p key={room.id}>
-          Room: {room.id}{" "}
-          <button onClick={(e) => handleDeleteRoom(e, room.id)}>Delete</button>
-        </p>
-      ))}
-      <h1>Add Room Page</h1>
-      <form onSubmit={(e) => handleSubmit(e)}>
-        <input
-          type="text"
-          placeholder="Room Name"
-          onChange={(e) => setRoom(e.target.value)}
-        />
-        <button type="submit">Add Room</button>
-      </form>
-      <h3>Room Info</h3>
-      <p>Room: {room}</p>
+    // <div>
+    //   <h1>Room&apos;s List</h1>
+    //   {roomList.map((room) => (
+    //     <p key={room.id}>
+    //       Room: {room.id}{" "}
+    //       <button onClick={(e) => handleDeleteRoom(e, room.id)}>Delete</button>
+    //     </p>
+    //   ))}
+    //   <h1>Add Room Page</h1>
+    //   <form onSubmit={(e) => handleSubmit(e)}>
+    //     <input
+    //       type="text"
+    //       placeholder="Room Name"
+    //       onChange={(e) => setRoom(e.target.value)}
+    //     />
+    //     <button type="submit">Add Room</button>
+    //   </form>
+    //   <h3>Room Info</h3>
+    //   <p>Room: {room}</p>
+    // </div>
+    <div className="container mx-auto p-4">
+      <h1 className=" text -uit text-2xl font-bold mb-4">
+        Danh sách phòng học
+      </h1>
+      <table className=" text-center text-uit  bg-white border border-gray-300 w-1/2">
+        <thead>
+          <tr>
+            <th className="py-2 px-4 border-b">Room</th>
+            <th className="py-2 px-4 border-b">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {roomList.map((roomItem) => (
+            <tr key={roomItem.id}>
+              <td className="py-2 px-4 border-b">{roomItem.id}</td>
+              <td className="py-2 px-4 border-b">
+                <button
+                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 transition"
+                  onClick={() => {
+                    setRoomToDelete(roomItem.id);
+                    setShowDeleteModal(true);
+                  }}
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <button
+        className="bg-blue-500 text-white px-4 py-2 rounded mt-4 hover:bg-blue-700 transition"
+        onClick={() => setShowAddForm(!showAddForm)}
+      >
+        Add Room
+      </button>
+      {showAddForm && (
+        <form onSubmit={handleSubmit} className="mt-4">
+          <input
+            type="text"
+            placeholder="Room Name"
+            value={room}
+            onChange={(e) => setRoom(e.target.value)}
+            className="border border-gray-300 p-2 rounded mb-2 w-full"
+          />
+          <button
+            type="submit"
+            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 transition"
+          >
+            Submit
+          </button>
+        </form>
+      )}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded shadow-lg">
+            <h2 className="text-lg font-bold mb-4">Xóa phòng học</h2>
+            <p>Xác nhận xóa phòng này</p>
+            <div className="mt-4 flex justify-end">
+              <button
+                className="bg-gray-500 text-white px-4 py-2 rounded mr-2 hover:bg-gray-700 transition"
+                onClick={() => setShowDeleteModal(false)}
+              >
+                Hủy
+              </button>
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 transition"
+                onClick={(e) => handleDeleteRoom(e, roomToDelete)}
+              >
+                Xóa
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

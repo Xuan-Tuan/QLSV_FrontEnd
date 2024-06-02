@@ -77,8 +77,13 @@ export default function ManageCoursePage() {
         (course) => course.code !== course.code
       );
       if (!isValidCourseID) {
-        alert("Course ID already exists");
-        return;
+        const existCourseID = courseList.filter(
+          (courseIndex) => course.code === courseIndex.code
+        );
+        if (existCourseID.length > 0) {
+          alert("Course ID already exists");
+          return;
+        }
       }
       await doAddCourse(course);
       await doAddCourseStudent(course.code, courseStudentList);
